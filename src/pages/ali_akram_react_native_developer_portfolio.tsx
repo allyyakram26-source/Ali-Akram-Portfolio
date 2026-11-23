@@ -52,13 +52,15 @@ const ABOUT_PARAGRAPHS = [
 
 const FACTS: Fact[] = [
   { id: 'years', target: 3, suffix: '+', label: 'years building mobile apps', accent: 'cyan' },
-  { id: 'projects', target: 10, suffix: '', label: 'projects listed below', accent: 'indigo' },
+  { id: 'projects', target: 15, suffix: '', label: 'projects listed below', accent: 'indigo' },
   { id: 'degrees', target: 2, suffix: '', label: 'degrees: BS CS and MSc AI', accent: 'emerald' },
   { id: 'platform', staticValue: 'iOS + Android', label: 'one React Native codebase', accent: 'amber' },
 ];
 
 const CORE_SKILLS = [
   'React Native',
+  'Node.js',
+  'SQL Server',
   'JavaScript',
   'Redux Toolkit',
   'State management',
@@ -74,6 +76,7 @@ const TOOL_SKILLS = [
   'Navigation',
   'Third-party library integration',
   'Responsive UI/UX design',
+  'Google Play Store deployment',
   'Project management tools',
 ];
 
@@ -93,6 +96,8 @@ const EXPERIENCES = [
       'Manage app state with Redux Toolkit for scalable, organised data handling.',
       'Built financial interfaces for Cash, Bank Balance, Receivables, Payables, Assets and Stock values with automatic calculations.',
       'Developed booking and service flows: listings, selections and user interactions.',
+      'Built React Native mobile applications with Node.js backend services and SQL Server databases.',
+      'Prepared and deployed Android applications to the Google Play Store.',
       'Test APIs in Postman and debug with React Native tools and Android Studio.',
     ],
   },
@@ -255,6 +260,66 @@ const PROJECTS: Project[] = [
     ],
     tags: ['UI design', 'App Interface', 'UX Flow'],
   },
+  {
+    id: 10,
+    title: 'Car Wash Mobile App',
+    description: 'BSCS final year project for booking and managing car wash services.',
+    category: 'Mobile app',
+    breakdown: [
+      'End-to-end car wash booking flow for selecting services, location, date, and time',
+      'Service catalog and customer order management with clear booking status tracking',
+      'Mobile interface for Android with reusable screens and structured appointment data',
+    ],
+    tags: ['BSCS Final Project', 'Android', 'React Native'],
+  },
+  {
+    id: 11,
+    title: 'AI Traffic Control System',
+    description: 'MS Applied AI dissertation using AI and data analytics.',
+    category: 'System',
+    breakdown: [
+      'AI-based traffic flow analysis and intelligent signal control decision support',
+      'Data analytics workflow for identifying congestion patterns and traffic trends',
+      'Dissertation project focused on improving road efficiency through predictive modelling',
+    ],
+    tags: ['MS AI Dissertation', 'Data Analytics', 'Traffic Control'],
+  },
+  {
+    id: 12,
+    title: 'App Guard',
+    description: 'Secure mobile application with protected access and monitoring workflows.',
+    category: 'Mobile app',
+    breakdown: [
+      'Secure authentication and protected application access flows',
+      'Real-time status and security event monitoring screens',
+      'Cross-platform React Native interface with Node.js API integration',
+    ],
+    tags: ['React Native', 'Node.js', 'Security'],
+  },
+  {
+    id: 13,
+    title: 'SoloPulse',
+    description: 'Mobile application for live business and performance monitoring.',
+    category: 'Mobile app',
+    breakdown: [
+      'Live performance dashboards and responsive mobile data views',
+      'Structured API-driven workflows for organised business information',
+      'Backend integration built around Node.js and SQL Server',
+    ],
+    tags: ['React Native', 'Node.js', 'SQL Server'],
+  },
+  {
+    id: 14,
+    title: 'Deskpin',
+    description: 'Cross-platform productivity and workspace management application.',
+    category: 'Mobile app',
+    breakdown: [
+      'Task, workspace, and status management for mobile users',
+      'React Native screens with responsive navigation and reusable components',
+      'Node.js APIs and SQL Server database integration with Play Store deployment',
+    ],
+    tags: ['React Native', 'Node.js', 'Google Play'],
+  },
 ];
 
 const EDUCATION = [
@@ -265,6 +330,7 @@ const EDUCATION = [
     period: '2024 – 2025',
     badge: 'Postgraduate',
     accent: 'indigo',
+    dissertation: 'Dissertation: AI and Data Analytics-based Traffic Control System',
   },
   {
     id: 'ucp',
@@ -273,6 +339,7 @@ const EDUCATION = [
     period: '2018 – 2022',
     badge: 'Undergraduate',
     accent: 'cyan',
+    dissertation: 'Final Year Project: Android Mobile App for Car Wash Services',
   },
 ];
 
@@ -1515,11 +1582,17 @@ export default function App() {
               <span className="text-slate-300 dark:text-slate-700">✦</span>
               <span className="text-amber-600 dark:text-amber-400">JavaScript</span>
               <span className="text-slate-300 dark:text-slate-700">✦</span>
+              <span className="text-emerald-600 dark:text-emerald-400">Node.js</span>
+              <span className="text-slate-300 dark:text-slate-700">✦</span>
+              <span className="text-cyan-600 dark:text-cyan-400">SQL Server</span>
+              <span className="text-slate-300 dark:text-slate-700">✦</span>
               <span className="text-emerald-600 dark:text-emerald-400">Firebase</span>
               <span className="text-slate-300 dark:text-slate-700">✦</span>
               <span className="text-sky-600 dark:text-sky-400">REST APIs</span>
               <span className="text-slate-300 dark:text-slate-700">✦</span>
               <span className="text-orange-600 dark:text-orange-400">Postman</span>
+              <span className="text-slate-300 dark:text-slate-700">✦</span>
+              <span className="text-violet-600 dark:text-violet-400">Google Play</span>
               <span className="text-slate-300 dark:text-slate-700">✦</span>
               <span className="text-slate-700 dark:text-slate-200">Git / GitHub</span>
               <span className="text-slate-300 dark:text-slate-700">✦</span>
@@ -1949,6 +2022,11 @@ export default function App() {
                       <p className="mt-2 text-base font-medium text-slate-600 dark:text-slate-300">
                         {edu.institution}
                       </p>
+                      {edu.dissertation && (
+                        <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                          {edu.dissertation}
+                        </p>
+                      )}
                     </div>
                   </article>
                 );
