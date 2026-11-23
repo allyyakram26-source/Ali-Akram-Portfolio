@@ -9,6 +9,16 @@
       content="Ali Akram - React Native Developer portfolio"
     />
     <title>Ali Akram | React Native Developer</title>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem('ali-portfolio-theme');
+          var isDark = theme ? theme === 'dark' : true;
+          document.documentElement.classList.toggle('dark', isDark);
+          document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
