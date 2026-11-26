@@ -10,7 +10,7 @@ export default function Pickup({ pickup }: PickupProps) {
 
   return (
     <div
-      className="drive-pickup"
+      className={`drive-pickup${pickup.skill ? ' drive-pickup-skill' : ''}`}
       style={{
         left: `${pickup.worldPosition}px`,
         bottom: `calc(100% - ${roadHeight}% + 70px)`,
@@ -18,7 +18,7 @@ export default function Pickup({ pickup }: PickupProps) {
       aria-hidden="true"
     >
       <span className="drive-pickup-coin">✦</span>
-      <small>+25%</small>
+      <small>{pickup.skill?.shortName ?? '+25%'}</small>
     </div>
   );
 }

@@ -1,12 +1,21 @@
 import { forwardRef } from 'react';
 
-const Car = forwardRef<HTMLDivElement>(function Car(_props, ref) {
+type CarProps = {
+  isRaining: boolean;
+  splashKey: number;
+};
+
+const Car = forwardRef<HTMLDivElement, CarProps>(function Car(
+  { isRaining, splashKey },
+  ref
+) {
   return (
     <div
       ref={ref}
       className="drive-car"
       data-moving="false"
       data-boosting="false"
+      data-raining={isRaining}
       aria-label="Ali's portfolio monster truck"
     >
       <svg className="drive-car-svg" viewBox="0 0 280 140" role="img" aria-label="Cyan monster truck">
@@ -71,6 +80,12 @@ const Car = forwardRef<HTMLDivElement>(function Car(_props, ref) {
         />
         <path d="m97 46 18-22c2-3 5-4 9-4h34c7 0 12 3 16 9l12 17H97Z" fill="url(#drive-car-window)" stroke="#A5F3FC" strokeOpacity=".85" strokeWidth="2" />
         <path d="M130 21v26m33-25 16 25" stroke="#67E8F9" strokeOpacity=".62" strokeWidth="2" />
+        <g className="drive-car-wipers drive-car-wiper-one" aria-hidden="true">
+          <path d="m119 45 16-18" />
+        </g>
+        <g className="drive-car-wipers drive-car-wiper-two" aria-hidden="true">
+          <path d="m145 45 17-17" />
+        </g>
 
         <path d="M91 52h122m-68-4v34m-37-15h18m39 0h20" stroke="#0F172A" strokeOpacity=".48" strokeWidth="2" />
         <path d="M157 61h20" stroke="#ECFEFF" strokeLinecap="round" strokeWidth="3" />
@@ -85,6 +100,9 @@ const Car = forwardRef<HTMLDivElement>(function Car(_props, ref) {
         <path className="drive-headlight-beam" d="m260 61 112-24v52l-112-15V61Z" fill="#BAF7FF" />
       </svg>
       <span className="drive-car-glow" aria-hidden="true" />
+      {splashKey > 0 && (
+        <span key={splashKey} className="drive-wheel-splash" aria-hidden="true" />
+      )}
     </div>
   );
 });

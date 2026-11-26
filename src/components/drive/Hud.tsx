@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import type { DriveStation, DriveStationId } from './stations';
 import { DRIVE_WORLD_WIDTH } from '../../hooks/useGameLoop';
+import type { DrivePickup } from './pickups';
+import DriveAchievements from './DriveAchievements';
+import {
+  DRIVE_WEATHER_ICONS,
+  DRIVE_WEATHER_LABELS,
+  type DriveWeather,
+} from './weather';
+import type { DriveAchievementId } from '../../hooks/useDriveAchievements';
 
 type HudProps = {
   stations: readonly DriveStation[];
@@ -9,11 +17,17 @@ type HudProps = {
   totalPickups: number;
   worldPosition: number;
   muted: boolean;
+  weather: DriveWeather;
   boostFuel: number;
   boostPressed: boolean;
   boosting: boolean;
+  skillPickups: readonly DrivePickup[];
+  collectedPickupIds: ReadonlySet<string>;
+  unlockedAchievements: ReadonlySet<DriveAchievementId>;
+  latestAchievement: DriveAchievementId | null;
   onJump: (station: DriveStation) => void;
   onToggleMuted: () => void;
+  onCycleWeather: () => void;
   onBoostChange: (pressed: boolean) => void;
 };
 
@@ -24,15 +38,23 @@ export default function Hud({
   totalPickups,
   worldPosition,
   muted,
+  weather,
   boostFuel,
   boostPressed,
   boosting,
+  skillPickups,
+  collectedPickupIds,
+  unlockedAchievements,
+  latestAchievement,
   onJump,
   onToggleMuted,
+  onCycleWeather,
   onBoostChange,
 }: HudProps) {
   const [selectedStationId, setSelectedStationId] = useState('');
   const progress = Math.min(Math.max(worldPosition / DRIVE_WORLD_WIDTH, 0), 1);
+  const foundSkills = skillPickups.filter((pickup) => collectedPickupIds.has(pickup.id)).length;
+  const skillNames = skillPickups.map((pickup) => pickup.skill?.name ?? 'Skill').join(' · ');
 
   const jumpTo = (stationId: string) => {
     const station = stations.find((item) => item.id === stationId);
@@ -116,6 +138,35 @@ export default function Hud({
           <small>Turbo</small>
         </button>
       </div>
+      <div className="drive-weather-row">
+        <span aria-live="polite">
+          <b aria-hidden="true">{DRIVE_WEATHER_ICONS[weather]}</b>
+          Weather · {DRIVE_WEATHER_LABELS[weather]}
+        </span>
+        <button
+          type="button"
+          aria-label={`Change weather. Current weather: ${DRIVE_WEATHER_LABELS[weather]}`}
+          onClick={onCycleWeather}
+        >
+          Change
+        </button>
+      </div>
+      <div
+        className={`drive-quest${foundSkills === skillPickups.length ? ' is-complete' : ''}`}
+        role="group"
+        aria-label={`Mini quest: find three skills, ${foundSkills} of ${skillPickups.length} found`}
+      >
+        <div>
+          <span>MINI QUEST</span>
+          <b>{foundSkills === skillPickups.length ? 'Skill hunt complete!' : 'Find 3 skills'}</b>
+          <small>{skillNames}</small>
+        </div>
+        <strong aria-hidden="true">{foundSkills}/{skillPickups.length}</strong>
+      </div>
+      <DriveAchievements
+        unlocked={unlockedAchievements}
+        latest={latestAchievement}
+      />
       <span className="sr-only" role="progressbar" aria-label="Distance through the portfolio road" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)} />
       <div className="drive-hud-bottom">
         <label className="drive-jump-label">
