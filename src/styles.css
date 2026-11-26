@@ -2689,6 +2689,7 @@ html[data-theme='dark'] .phone-tech-icon.phone-tech-typescript {
   padding: max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
   background: rgba(2, 6, 23, 0.62);
   backdrop-filter: blur(7px);
+  pointer-events: none;
 }
 
 .drive-station-panel {
@@ -2704,6 +2705,7 @@ html[data-theme='dark'] .phone-tech-icon.phone-tech-typescript {
   color: #0f172a;
   box-shadow: 0 35px 100px rgba(2, 6, 23, 0.48);
   animation: drive-panel-enter 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  pointer-events: auto;
 }
 
 html[data-theme='dark'] .drive-station-panel {
@@ -3127,6 +3129,14 @@ html[data-theme='dark'] .drive-contact-links {
 @media (max-width: 640px), (hover: none), (pointer: coarse) {
   .drive-touch-controls {
     display: flex;
+  }
+
+  .drive-panel-backdrop {
+    padding-bottom: max(100px, calc(env(safe-area-inset-bottom) + 90px));
+  }
+
+  .drive-station-panel {
+    max-height: calc(100dvh - 128px);
   }
 }
 

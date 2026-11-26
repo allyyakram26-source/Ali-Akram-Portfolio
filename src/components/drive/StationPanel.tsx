@@ -188,7 +188,7 @@ export default function StationPanel({ station, onClose }: StationPanelProps) {
           <StationContent station={station} />
         </div>
         <footer className="drive-panel-footer">
-          <span>Station visited</span>
+          <span>Station visited · Drive forward to close</span>
           <button type="button" onClick={onClose}>Back to the road <span aria-hidden="true">→</span></button>
         </footer>
       </section>

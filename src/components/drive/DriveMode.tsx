@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ConfettiBurst, { type ConfettiOrigin } from '../ConfettiBurst';
 import useCarControls from '../../hooks/useCarControls';
-import useGameLoop from '../../hooks/useGameLoop';
+import useGameLoop, { DRIVE_WORLD_WIDTH } from '../../hooks/useGameLoop';
 import { CONTACT_INFO } from '../../data/portfolioContent';
 import Car from './Car';
 import Road from './Road';
@@ -48,9 +48,9 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
     setPickupToastId(pickupId);
   }, []);
 
-  const controls = useCarControls(!activeStation);
+  const controls = useCarControls(true);
   const game = useGameLoop({
-    enabled: !activeStation,
+    enabled: true,
     movementRef: controls.movementRef,
     worldRef,
     farLayerRef,
@@ -71,6 +71,20 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
     },
     [game.jumpTo, openStationById]
   );
+
+  useEffect(() => {
+    if (!activeStation) return;
+    const carWorldPosition = game.worldPosition + window.innerWidth * 0.2;
+    const reachedRoadEndWhileDriving =
+      game.worldPosition >= DRIVE_WORLD_WIDTH - window.innerWidth &&
+      controls.movementRef.current.right;
+    if (
+      carWorldPosition - activeStation.worldPosition > 160 ||
+      reachedRoadEndWhileDriving
+    ) {
+      setActiveStation(null);
+    }
+  }, [activeStation, controls.movementRef, game.speed, game.worldPosition]);
 
   useEffect(() => {
     if (
