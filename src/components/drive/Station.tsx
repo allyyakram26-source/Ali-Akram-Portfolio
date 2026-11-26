@@ -20,7 +20,7 @@ export default function Station({ station, visited, onOpen }: StationProps) {
       onClick={() => onOpen(station)}
     >
       <span className="drive-station-sign">
-        <span className="drive-station-number">{String(Math.round(station.worldPosition / 900)).padStart(2, '0')}</span>
+        <span className="drive-station-number">{String(station.number).padStart(2, '0')}</span>
         <b>{station.label}</b>
         <small>{station.subtitle}</small>
       </span>

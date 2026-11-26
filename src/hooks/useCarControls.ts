@@ -3,26 +3,37 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 export type DriveMovement = {
   left: boolean;
   right: boolean;
+  boost: boolean;
+  jump: boolean;
 };
 
 export default function useCarControls(enabled: boolean) {
-  const movementRef = useRef<DriveMovement>({ left: false, right: false });
-  const keyboardRef = useRef<DriveMovement>({ left: false, right: false });
-  const touchRef = useRef<DriveMovement>({ left: false, right: false });
+  const movementRef = useRef<DriveMovement>({ left: false, right: false, boost: false, jump: false });
+  const keyboardRef = useRef<DriveMovement>({ left: false, right: false, boost: false, jump: false });
+  const touchRef = useRef<DriveMovement>({ left: false, right: false, boost: false, jump: false });
   const [hornPressed, setHornPressed] = useState(false);
+  const [boostPressed, setBoostPressed] = useState(false);
+  const [jumpPressed, setJumpPressed] = useState(false);
   const [muted, setMuted] = useState(true);
 
   const syncMovement = useCallback(() => {
     movementRef.current = {
       left: keyboardRef.current.left || touchRef.current.left,
       right: keyboardRef.current.right || touchRef.current.right,
+      boost: keyboardRef.current.boost || touchRef.current.boost,
+      jump: keyboardRef.current.jump || touchRef.current.jump,
     };
   }, []);
 
-  const setTouchDirection = useCallback(
-    (direction: keyof DriveMovement, pressed: boolean) => {
-      touchRef.current[direction] = pressed;
+  const setTouchControl = useCallback(
+    (control: keyof DriveMovement, pressed: boolean) => {
+      touchRef.current[control] = pressed;
       syncMovement();
+      if (control === 'boost') {
+        setBoostPressed(keyboardRef.current.boost || pressed);
+      } else if (control === 'jump') {
+        setJumpPressed(keyboardRef.current.jump || pressed);
+      }
     },
     [syncMovement]
   );
@@ -58,10 +69,12 @@ export default function useCarControls(enabled: boolean) {
 
   useEffect(() => {
     if (!enabled) {
-      keyboardRef.current = { left: false, right: false };
-      touchRef.current = { left: false, right: false };
-      movementRef.current = { left: false, right: false };
+      keyboardRef.current = { left: false, right: false, boost: false, jump: false };
+      touchRef.current = { left: false, right: false, boost: false, jump: false };
+      movementRef.current = { left: false, right: false, boost: false, jump: false };
       setHornPressed(false);
+      setBoostPressed(false);
+      setJumpPressed(false);
       return undefined;
     }
 
@@ -81,6 +94,16 @@ export default function useCarControls(enabled: boolean) {
         event.preventDefault();
         keyboardRef.current.right = true;
         syncMovement();
+      } else if (key === 'shift') {
+        event.preventDefault();
+        keyboardRef.current.boost = true;
+        syncMovement();
+        setBoostPressed(true);
+      } else if (key === 'arrowup' || key === 'w') {
+        event.preventDefault();
+        keyboardRef.current.jump = true;
+        syncMovement();
+        setJumpPressed(true);
       } else if (event.code === 'Space') {
         event.preventDefault();
         if (!event.repeat) honk();
@@ -95,16 +118,26 @@ export default function useCarControls(enabled: boolean) {
       } else if (key === 'arrowright' || key === 'd') {
         keyboardRef.current.right = false;
         syncMovement();
+      } else if (key === 'shift') {
+        keyboardRef.current.boost = false;
+        syncMovement();
+        setBoostPressed(touchRef.current.boost);
+      } else if (key === 'arrowup' || key === 'w') {
+        keyboardRef.current.jump = false;
+        syncMovement();
+        setJumpPressed(touchRef.current.jump);
       } else if (event.code === 'Space') {
         releaseHorn();
       }
     };
 
     const releaseAll = () => {
-      keyboardRef.current = { left: false, right: false };
-      touchRef.current = { left: false, right: false };
+      keyboardRef.current = { left: false, right: false, boost: false, jump: false };
+      touchRef.current = { left: false, right: false, boost: false, jump: false };
       syncMovement();
       releaseHorn();
+      setBoostPressed(false);
+      setJumpPressed(false);
     };
 
     window.addEventListener('keydown', onKeyDown);
@@ -123,9 +156,11 @@ export default function useCarControls(enabled: boolean) {
   return {
     movementRef,
     hornPressed,
+    boostPressed,
+    jumpPressed,
     muted,
     setMuted,
-    setTouchDirection,
+    setTouchControl,
     honk,
     releaseHorn,
   };

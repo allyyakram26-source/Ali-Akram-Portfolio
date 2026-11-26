@@ -9,6 +9,8 @@ import Station from './Station';
 import StationPanel from './StationPanel';
 import TouchControls from './TouchControls';
 import Hud from './Hud';
+import Pickup from './Pickup';
+import { DRIVE_PICKUPS } from './pickups';
 import { DRIVE_STATIONS, type DriveStation, type DriveStationId } from './stations';
 import { getDriveRoadSurfaceY } from './roadGeometry';
 
@@ -26,6 +28,8 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
   const carRef = useRef<HTMLDivElement>(null);
   const [activeStation, setActiveStation] = useState<DriveStation | null>(null);
   const [visitedStations, setVisitedStations] = useState<Set<DriveStationId>>(() => new Set());
+  const [collectedPickups, setCollectedPickups] = useState<Set<string>>(() => new Set());
+  const [pickupToastId, setPickupToastId] = useState<string | null>(null);
   const [celebrationVisible, setCelebrationVisible] = useState(false);
   const [confettiKey, setConfettiKey] = useState(0);
   const [confettiOrigin, setConfettiOrigin] = useState<ConfettiOrigin | null>(null);
@@ -39,6 +43,10 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
   }, []);
 
   const handleStationClose = useCallback(() => setActiveStation(null), []);
+  const handlePickup = useCallback((pickupId: string) => {
+    setCollectedPickups((collected) => new Set(collected).add(pickupId));
+    setPickupToastId(pickupId);
+  }, []);
 
   const controls = useCarControls(!activeStation);
   const game = useGameLoop({
@@ -51,7 +59,10 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
     carRef,
     stations: DRIVE_STATIONS,
     visitedStations,
+    pickups: DRIVE_PICKUPS,
+    collectedPickups,
     onStationApproach: openStationById,
+    onPickup: handlePickup,
   });
   const handleJumpToStation = useCallback(
     (station: DriveStation) => {
@@ -73,6 +84,12 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
     setConfettiKey((key) => key + 1);
   }, [activeStation, visitedStations]);
 
+  useEffect(() => {
+    if (!pickupToastId) return undefined;
+    const timeoutId = window.setTimeout(() => setPickupToastId(null), 1500);
+    return () => window.clearTimeout(timeoutId);
+  }, [pickupToastId]);
+
   return (
     <main
       className="drive-mode"
@@ -93,6 +110,9 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
             visited={visitedStations.has(station.id)}
             onOpen={handleJumpToStation}
           />
+        ))}
+        {DRIVE_PICKUPS.filter((pickup) => !collectedPickups.has(pickup.id)).map((pickup) => (
+          <Pickup key={pickup.id} pickup={pickup} />
         ))}
       </Road>
       <Car ref={carRef} />
@@ -118,7 +138,8 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
           <span className="drive-eyebrow">INTERACTIVE PORTFOLIO</span>
           <h1>Take a drive through my work</h1>
           <p>Hold <kbd>→</kbd> or <kbd>D</kbd> to accelerate. <kbd>←</kbd> or <kbd>A</kbd> to brake.</p>
-          <p className="drive-intro-secondary">Stop at the road signs to explore each portfolio section.</p>
+          <p>Build speed, then press <kbd>↑</kbd> or <kbd>W</kbd> to jump. Hold <kbd>Shift</kbd> or Turbo to boost.</p>
+          <p className="drive-intro-secondary">Stop at road signs to explore, and grab glowing stars to refill Nitro.</p>
         </section>
       )}
       <div className="drive-status" aria-live="polite">
@@ -129,16 +150,29 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
       <Hud
         stations={DRIVE_STATIONS}
         visitedStations={visitedStations}
+        collectedPickupCount={collectedPickups.size}
+        totalPickups={DRIVE_PICKUPS.length}
         worldPosition={game.worldPosition}
         muted={controls.muted}
+        boostFuel={game.boostFuel}
+        boostPressed={controls.boostPressed}
+        boosting={game.boosting}
         onJump={handleJumpToStation}
         onToggleMuted={() => controls.setMuted((muted) => !muted)}
+        onBoostChange={(pressed) => controls.setTouchControl('boost', pressed)}
       />
+      {pickupToastId && (
+        <div className="drive-pickup-toast" role="status" aria-live="polite">
+          <span aria-hidden="true">✦</span>
+          STAR COLLECTED <b>+25% NITRO</b>
+        </div>
+      )}
       <TouchControls
-        onDirectionChange={controls.setTouchDirection}
+        onControlChange={controls.setTouchControl}
         onHonk={controls.honk}
         onReleaseHorn={controls.releaseHorn}
         hornPressed={controls.hornPressed}
+        jumpPressed={controls.jumpPressed}
         muted={controls.muted}
       />
       {activeStation && <StationPanel station={activeStation} onClose={handleStationClose} />}

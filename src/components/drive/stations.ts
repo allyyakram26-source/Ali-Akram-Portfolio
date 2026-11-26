@@ -26,6 +26,7 @@ type DriveStationContent =
 
 export type DriveStation = {
   id: DriveStationId;
+  number: number;
   label: string;
   subtitle: string;
   worldPosition: number;
@@ -36,6 +37,7 @@ export type DriveStation = {
 export const DRIVE_STATIONS: readonly DriveStation[] = [
   {
     id: 'about',
+    number: 1,
     label: 'About',
     subtitle: 'Meet the driver',
     worldPosition: 640,
@@ -44,41 +46,46 @@ export const DRIVE_STATIONS: readonly DriveStation[] = [
   },
   {
     id: 'skills',
+    number: 2,
     label: 'Skills',
     subtitle: 'Tools on board',
-    worldPosition: 1540,
+    worldPosition: 1680,
     accent: 'indigo',
     content: { type: 'skills', core: CORE_SKILLS, tools: TOOL_SKILLS },
   },
   {
     id: 'education',
+    number: 3,
     label: 'Education',
     subtitle: 'Learning journey',
-    worldPosition: 2440,
+    worldPosition: 2720,
     accent: 'emerald',
     content: { type: 'education', items: EDUCATION },
   },
   {
     id: 'experience',
+    number: 4,
     label: 'Experience',
     subtitle: 'Career track',
-    worldPosition: 3340,
+    worldPosition: 3760,
     accent: 'amber',
     content: { type: 'experience', items: EXPERIENCES },
   },
   {
     id: 'projects',
+    number: 5,
     label: 'Projects',
     subtitle: 'Selected work',
-    worldPosition: 4240,
+    worldPosition: 4800,
     accent: 'rose',
     content: { type: 'projects', items: PROJECTS, github: CONTACT_INFO.github },
   },
   {
     id: 'contact',
+    number: 6,
     label: 'Contact',
     subtitle: 'Let’s connect',
-    worldPosition: 5140,
+    worldPosition: 5840,
     accent: 'violet',
     content: { type: 'contact', details: CONTACT_INFO },
   },

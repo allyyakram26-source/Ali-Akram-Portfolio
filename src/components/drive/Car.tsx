@@ -2,7 +2,13 @@ import { forwardRef } from 'react';
 
 const Car = forwardRef<HTMLDivElement>(function Car(_props, ref) {
   return (
-    <div ref={ref} className="drive-car" data-moving="false" aria-label="Ali's portfolio monster truck">
+    <div
+      ref={ref}
+      className="drive-car"
+      data-moving="false"
+      data-boosting="false"
+      aria-label="Ali's portfolio monster truck"
+    >
       <svg className="drive-car-svg" viewBox="0 0 280 140" role="img" aria-label="Cyan monster truck">
         <defs>
           <linearGradient id="drive-car-paint" x1="32" y1="26" x2="250" y2="102" gradientUnits="userSpaceOnUse">
@@ -21,7 +27,15 @@ const Car = forwardRef<HTMLDivElement>(function Car(_props, ref) {
           </linearGradient>
         </defs>
 
-        <ellipse cx="143" cy="142" rx="118" ry="7" fill="#020617" opacity=".3" />
+        <ellipse
+          className="drive-car-shadow"
+          cx="143"
+          cy="142"
+          rx="118"
+          ry="7"
+          fill="#020617"
+          opacity=".3"
+        />
 
         <g className="drive-car-wheel">
           <circle cx="72" cy="111" r="29" fill="#111827" stroke="#020617" strokeWidth="5" />
@@ -37,6 +51,11 @@ const Car = forwardRef<HTMLDivElement>(function Car(_props, ref) {
           <circle cx="207" cy="111" r="17" fill="url(#drive-truck-rim)" stroke="#E2E8F0" strokeWidth="2" />
           <path d="M207 96v30m-15-15h30m-26-11 22 22m0-22-22 22" stroke="#22D3EE" strokeWidth="3" />
           <circle cx="207" cy="111" r="5" fill="#0F172A" />
+        </g>
+
+        <g className="drive-nitro-flame" aria-hidden="true">
+          <path d="M29 66C10 55-4 58-23 48c9 17 10 21-7 34 19-4 35 4 59-4Z" fill="#F97316" />
+          <path d="M27 69C11 63 2 65-10 59c7 11 8 14-4 21 13-2 23 2 37-3Z" fill="#FDE047" />
         </g>
 
         <path d="m45 82 22-17m24 17 21-17m56 16 19-15m17 16-18-15" fill="none" stroke="#94A3B8" strokeWidth="5" strokeLinecap="round" />

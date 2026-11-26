@@ -10,6 +10,29 @@ html {
   text-size-adjust: 100%;
 }
 
+@keyframes drive-pickup-float {
+  to {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes drive-pickup-turn {
+  50% {
+    transform: rotateY(180deg) scale(0.82);
+  }
+}
+
+@keyframes drive-pickup-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px) scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
 html[data-theme='light'] {
   color-scheme: light;
 }
@@ -1770,13 +1793,181 @@ html[data-theme='dark'] .phone-tech-icon.phone-tech-typescript {
   opacity: 0.82;
 }
 
+.drive-pickup {
+  position: absolute;
+  z-index: 9;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  justify-items: center;
+  margin-left: -24px;
+  animation: drive-pickup-float 1.25s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.drive-pickup-coin {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  place-items: center;
+  border: 2px solid #fef08a;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #fef9c3, #facc15 58%, #d97706);
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.66), inset 0 0 0 3px rgba(255, 255, 255, 0.3);
+  color: #92400e;
+  font-size: 24px;
+  font-weight: 900;
+  animation: drive-pickup-turn 2.2s ease-in-out infinite;
+}
+
+.drive-pickup small {
+  position: absolute;
+  top: -3px;
+  right: -9px;
+  padding: 3px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  background: #10b981;
+  color: white;
+  font: 800 7px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.drive-boost-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 2px 10px;
+}
+
+.drive-boost-meter {
+  min-width: 0;
+  flex: 1;
+}
+
+.drive-boost-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  color: #64748b;
+  font: 800 8px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.1em;
+}
+
+.drive-boost-label span {
+  color: #0891b2;
+}
+
+.drive-boost-label b {
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.drive-boost-track {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.2);
+}
+
+.drive-boost-track > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #22d3ee, #818cf8);
+  transform-origin: left center;
+  transition: transform 110ms linear;
+}
+
+.drive-boost-row.is-boosting .drive-boost-track > span {
+  background: linear-gradient(90deg, #facc15, #fb7185);
+}
+
+.drive-boost-button {
+  display: grid;
+  width: 55px;
+  min-height: 36px;
+  place-content: center;
+  gap: 1px;
+  padding: 3px;
+  border: 1px solid rgba(34, 211, 238, 0.4);
+  border-radius: 10px;
+  background: linear-gradient(145deg, #cffafe, #c7d2fe);
+  color: #0f172a;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.drive-boost-button > span {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.drive-boost-button small {
+  font: 800 7px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.drive-boost-button.is-pressed,
+.drive-boost-button:active {
+  border-color: #22d3ee;
+  background: linear-gradient(145deg, #67e8f9, #a5b4fc);
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.42);
+}
+
+.drive-boost-button:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 3px;
+}
+
+.drive-pickup-toast {
+  position: absolute;
+  z-index: 40;
+  bottom: max(106px, calc(env(safe-area-inset-bottom) + 96px));
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border: 1px solid rgba(250, 204, 21, 0.58);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.88);
+  box-shadow: 0 8px 26px rgba(2, 6, 23, 0.28);
+  color: #f8fafc;
+  font: 800 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: drive-pickup-toast-in 180ms ease-out both;
+}
+
+.drive-pickup-toast > span {
+  color: #facc15;
+  font-size: 16px;
+}
+
+.drive-pickup-toast b {
+  color: #6ee7b7;
+}
+
+.drive-mode[data-theme='night'] .drive-boost-label,
+.drive-mode[data-theme='night'] .drive-boost-label b {
+  color: #cbd5e1;
+}
+
+.drive-mode[data-theme='night'] .drive-boost-label span {
+  color: #67e8f9;
+}
+
 .drive-car {
   position: absolute;
   z-index: 12;
   bottom: calc(100% - var(--road-surface-y, 69%));
   left: clamp(4.5rem, 20vw, 12rem);
   width: clamp(170px, 28vw, 270px);
-  transform: translateY(0) rotate(var(--car-tilt, 0deg));
+  transform: translateY(var(--truck-jump-y, 0px)) rotate(var(--car-tilt, 0deg));
   transform-origin: 50% 85%;
   transition: transform 160ms ease-out;
 }
@@ -1809,6 +2000,24 @@ html[data-theme='dark'] .phone-tech-icon.phone-tech-typescript {
   opacity: 0;
 }
 
+.drive-nitro-flame {
+  opacity: 0;
+  transform: scale(0.7);
+  transform-box: fill-box;
+  transform-origin: right center;
+  filter: drop-shadow(0 0 7px rgba(251, 146, 60, 0.8));
+  pointer-events: none;
+}
+
+.drive-car[data-boosting='true'] .drive-nitro-flame {
+  opacity: 1;
+  animation: drive-nitro-flame 110ms ease-in-out infinite alternate;
+}
+
+.drive-car[data-boosting='true'] .drive-car-glow {
+  opacity: 0.78;
+}
+
 .drive-scene[data-theme='night'] ~ .drive-car .drive-headlight-beam {
   opacity: 0.2;
 }
@@ -1833,13 +2042,27 @@ html[data-theme='dark'] .phone-tech-icon.phone-tech-typescript {
 
 @keyframes drive-car-bounce {
   to {
-    transform: translateY(-2px) rotate(var(--car-tilt, 0deg));
+    transform: translateY(calc(var(--truck-jump-y, 0px) - 2px)) rotate(var(--car-tilt, 0deg));
   }
 }
 
 @keyframes drive-wheel-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+.drive-car-shadow {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translateY(var(--truck-shadow-offset, 0px)) scaleX(var(--truck-shadow-scale, 1));
+  opacity: var(--truck-shadow-opacity, 0.3);
+}
+
+@keyframes drive-nitro-flame {
+  to {
+    transform: scaleX(1.14) scaleY(0.88);
+    opacity: 0.78;
   }
 }
 
@@ -2092,8 +2315,22 @@ html[data-theme='dark'] .phone-tech-icon.phone-tech-typescript {
   letter-spacing: 0;
 }
 
+.drive-hud-counts {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.drive-hud-topline .drive-star-count {
+  color: #d97706;
+}
+
 .drive-mode[data-theme='night'] .drive-hud-topline b {
   color: #67e8f9;
+}
+
+.drive-mode[data-theme='night'] .drive-hud-topline .drive-star-count {
+  color: #facc15;
 }
 
 .drive-map {
@@ -2871,6 +3108,20 @@ html[data-theme='dark'] .drive-contact-links {
 
 .drive-touch-controls .drive-horn-button > span {
   font-size: 18px;
+}
+
+.drive-touch-controls .drive-jump-button {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 8px;
+  border-color: rgba(251, 191, 36, 0.62);
+  border-radius: 17px;
+  background: linear-gradient(145deg, rgba(124, 45, 18, 0.84), rgba(30, 41, 59, 0.82));
+}
+
+.drive-touch-controls .drive-jump-button > span {
+  color: #fde68a;
+  font-size: 24px;
 }
 
 @media (max-width: 640px), (hover: none), (pointer: coarse) {

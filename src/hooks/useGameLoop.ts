@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type MutableRefObject, type RefObject } from 'react';
 import type { DriveMovement } from './useCarControls';
 import { DRIVE_WORLD_WIDTH, getDriveRoadSurfaceY } from '../components/drive/roadGeometry';
+import type { DrivePickup } from '../components/drive/pickups';
 
 export { DRIVE_WORLD_WIDTH } from '../components/drive/roadGeometry';
 
@@ -19,7 +20,10 @@ type UseGameLoopOptions = {
   carRef: RefObject<HTMLDivElement>;
   stations: readonly DriveStationPosition[];
   visitedStations: ReadonlySet<string>;
+  pickups: readonly DrivePickup[];
+  collectedPickups: ReadonlySet<string>;
   onStationApproach?: (stationId: string) => void;
+  onPickup?: (pickupId: string) => void;
 };
 
 function setTransform(element: HTMLDivElement | null, value: string) {
@@ -36,12 +40,22 @@ export default function useGameLoop({
   carRef,
   stations,
   visitedStations,
+  pickups,
+  collectedPickups,
   onStationApproach,
+  onPickup,
 }: UseGameLoopOptions) {
   const worldPositionRef = useRef(0);
   const speedRef = useRef(0);
+  const boostFuelRef = useRef(100);
   const openedStationsRef = useRef(new Set<string>());
-  const [metrics, setMetrics] = useState({ worldPosition: 0, speed: 0 });
+  const collectedPickupsRef = useRef(new Set<string>());
+  const [metrics, setMetrics] = useState({
+    worldPosition: 0,
+    speed: 0,
+    boostFuel: 100,
+    boosting: false,
+  });
 
   const jumpTo = useCallback(
     (stationWorldPosition: number) => {
@@ -58,7 +72,13 @@ export default function useGameLoop({
         '--road-surface-y',
         `${getDriveRoadSurfaceY(position + carAnchor)}%`
       );
-      setMetrics({ worldPosition: Math.round(position), speed: 0 });
+      if (carRef.current) carRef.current.dataset.boosting = 'false';
+      setMetrics({
+        worldPosition: Math.round(position),
+        speed: 0,
+        boostFuel: boostFuelRef.current,
+        boosting: false,
+      });
     },
     [carRef, farLayerRef, middleLayerRef, nearLayerRef, worldRef]
   );
@@ -66,8 +86,14 @@ export default function useGameLoop({
   useEffect(() => {
     if (!enabled) {
       speedRef.current = 0;
-      setMetrics((current) => ({ ...current, speed: 0 }));
-      if (carRef.current) carRef.current.dataset.moving = 'false';
+      setMetrics((current) => ({ ...current, speed: 0, boosting: false }));
+      if (carRef.current) {
+        carRef.current.dataset.moving = 'false';
+        carRef.current.dataset.boosting = 'false';
+        carRef.current.dataset.airborne = 'false';
+        carRef.current.style.setProperty('--truck-jump-y', '0px');
+        carRef.current.style.setProperty('--truck-shadow-offset', '0px');
+      }
       return undefined;
     }
 
@@ -75,6 +101,8 @@ export default function useGameLoop({
     let lastFrameTime = 0;
     let lastMetricsTime = 0;
     let lastWheelDuration = '';
+    let jumpStartedAt: number | null = null;
+    let jumpWasPressed = false;
 
     const renderFrame = (now: number) => {
       if (document.visibilityState === 'hidden') {
@@ -90,9 +118,32 @@ export default function useGameLoop({
 
       const movement = movementRef.current;
       const direction = Number(movement.right) - Number(movement.left);
-      const targetSpeed = direction > 0 ? 7.2 : direction < 0 ? -4.8 : 0;
+      const requestingBoost = movement.boost && direction > 0;
+      if (requestingBoost && boostFuelRef.current > 0) {
+        boostFuelRef.current = Math.max(0, boostFuelRef.current - 0.36 * deltaFrames);
+      } else if (!requestingBoost) {
+        boostFuelRef.current = Math.min(100, boostFuelRef.current + 0.16 * deltaFrames);
+      }
+      const boosting = requestingBoost && boostFuelRef.current > 0;
+      const targetSpeed = direction > 0 ? (boosting ? 12.5 : 7.2) : direction < 0 ? -4.8 : 0;
       const easing = 1 - Math.pow(0.84, deltaFrames);
       speedRef.current += (targetSpeed - speedRef.current) * easing;
+
+      if (movement.jump && !jumpWasPressed && Math.abs(speedRef.current) > 1.2) {
+        jumpStartedAt = now;
+      }
+      jumpWasPressed = movement.jump;
+
+      let jumpHeight = 0;
+      let jumpProgress = 1;
+      if (jumpStartedAt !== null) {
+        jumpProgress = (now - jumpStartedAt) / 760;
+        if (jumpProgress >= 1) {
+          jumpStartedAt = null;
+        } else {
+          jumpHeight = Math.sin(Math.PI * jumpProgress) * 70;
+        }
+      }
 
       const maxOffset = Math.max(DRIVE_WORLD_WIDTH - window.innerWidth, 0);
       worldPositionRef.current = Math.min(
@@ -114,9 +165,17 @@ export default function useGameLoop({
           '--road-surface-y',
           `${getDriveRoadSurfaceY(position + carAnchor)}%`
         );
-        const tilt = direction > 0 ? -2.5 : direction < 0 ? 3 : 0;
-        car.style.setProperty('--car-tilt', `${tilt}deg`);
+        const driveTilt = direction > 0 ? -2.5 : direction < 0 ? 3 : 0;
+        const jumpTilt = jumpHeight > 0 ? (jumpProgress < 0.5 ? -7 : 5) : 0;
+        const shadowScale = 1 - (jumpHeight / 70) * 0.38;
+        car.style.setProperty('--car-tilt', `${driveTilt + jumpTilt}deg`);
+        car.style.setProperty('--truck-jump-y', `${-jumpHeight}px`);
+        car.style.setProperty('--truck-shadow-offset', `${jumpHeight}px`);
+        car.style.setProperty('--truck-shadow-scale', String(shadowScale));
+        car.style.setProperty('--truck-shadow-opacity', String(0.3 - (jumpHeight / 70) * 0.18));
         car.dataset.moving = String(Math.abs(speed) > 0.15);
+        car.dataset.boosting = String(boosting);
+        car.dataset.airborne = String(jumpHeight > 0);
         const wheelDuration = `${Math.max(0.16, 0.72 - Math.abs(speed) * 0.075).toFixed(2)}s`;
         if (wheelDuration !== lastWheelDuration) {
           car.style.setProperty('--wheel-duration', wheelDuration);
@@ -138,8 +197,27 @@ export default function useGameLoop({
         }
       }
 
+      for (const pickup of pickups) {
+        const distance = pickup.worldPosition - position - carAnchor;
+        if (
+          Math.abs(distance) < 54 &&
+          !collectedPickups.has(pickup.id) &&
+          !collectedPickupsRef.current.has(pickup.id)
+        ) {
+          collectedPickupsRef.current.add(pickup.id);
+          boostFuelRef.current = Math.min(100, boostFuelRef.current + 25);
+          onPickup?.(pickup.id);
+          break;
+        }
+      }
+
       if (now - lastMetricsTime > 100) {
-        setMetrics({ worldPosition: Math.round(position), speed: Math.round(speed * 10) / 10 });
+        setMetrics({
+          worldPosition: Math.round(position),
+          speed: Math.round(speed * 10) / 10,
+          boostFuel: Math.round(boostFuelRef.current),
+          boosting,
+        });
         lastMetricsTime = now;
       }
 
@@ -177,8 +255,11 @@ export default function useGameLoop({
     movementRef,
     nearLayerRef,
     onStationApproach,
+    onPickup,
+    pickups,
     stations,
     visitedStations,
+    collectedPickups,
     worldRef,
   ]);
 

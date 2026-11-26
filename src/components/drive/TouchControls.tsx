@@ -2,41 +2,43 @@ import type { PointerEvent } from 'react';
 import type { DriveMovement } from '../../hooks/useCarControls';
 
 type TouchControlsProps = {
-  onDirectionChange: (direction: keyof DriveMovement, pressed: boolean) => void;
+  onControlChange: (control: keyof DriveMovement, pressed: boolean) => void;
   onHonk: () => void;
   onReleaseHorn: () => void;
   hornPressed: boolean;
+  jumpPressed: boolean;
   muted: boolean;
 };
 
 function holdHandlers(
   direction: keyof DriveMovement,
-  onDirectionChange: TouchControlsProps['onDirectionChange']
+  onControlChange: TouchControlsProps['onControlChange']
 ) {
   const release = (event: PointerEvent<HTMLButtonElement>) => {
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
-    onDirectionChange(direction, false);
+    onControlChange(direction, false);
   };
 
   return {
     onPointerDown: (event: PointerEvent<HTMLButtonElement>) => {
       event.preventDefault();
       event.currentTarget.setPointerCapture(event.pointerId);
-      onDirectionChange(direction, true);
+      onControlChange(direction, true);
     },
     onPointerUp: release,
     onPointerCancel: release,
-    onLostPointerCapture: () => onDirectionChange(direction, false),
+    onLostPointerCapture: () => onControlChange(direction, false),
   };
 }
 
 export default function TouchControls({
-  onDirectionChange,
+  onControlChange,
   onHonk,
   onReleaseHorn,
   hornPressed,
+  jumpPressed,
   muted,
 }: TouchControlsProps) {
   return (
@@ -45,7 +47,7 @@ export default function TouchControls({
         type="button"
         aria-label="Brake and drive left"
         aria-keyshortcuts="ArrowLeft A"
-        {...holdHandlers('left', onDirectionChange)}
+        {...holdHandlers('left', onControlChange)}
       >
         <span aria-hidden="true">←</span>
         <small>Brake</small>
@@ -54,10 +56,21 @@ export default function TouchControls({
         type="button"
         aria-label="Accelerate and drive right"
         aria-keyshortcuts="ArrowRight D"
-        {...holdHandlers('right', onDirectionChange)}
+        {...holdHandlers('right', onControlChange)}
       >
         <span aria-hidden="true">→</span>
         <small>Drive</small>
+      </button>
+      <button
+        type="button"
+        className={`drive-jump-button ${jumpPressed ? 'is-pressed' : ''}`}
+        aria-label="Hold to perform a monster truck jump"
+        aria-keyshortcuts="ArrowUp W"
+        aria-pressed={jumpPressed}
+        {...holdHandlers('jump', onControlChange)}
+      >
+        <span aria-hidden="true">↑</span>
+        <small>Jump</small>
       </button>
       <button
         type="button"
