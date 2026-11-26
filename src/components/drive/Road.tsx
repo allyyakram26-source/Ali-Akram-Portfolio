@@ -1,6 +1,11 @@
 import type { ReactNode, RefObject } from 'react';
 import ParallaxLayer from './ParallaxLayer';
 import { DRIVE_WORLD_WIDTH } from '../../hooks/useGameLoop';
+import {
+  DRIVE_ROAD_CENTER_PATH,
+  DRIVE_ROAD_EDGE_PATH,
+  DRIVE_ROAD_VIEWBOX_WIDTH,
+} from './roadGeometry';
 
 type RoadProps = {
   isDark: boolean;
@@ -9,7 +14,6 @@ type RoadProps = {
   farLayerRef: RefObject<HTMLDivElement>;
   middleLayerRef: RefObject<HTMLDivElement>;
   nearLayerRef: RefObject<HTMLDivElement>;
-  roadMarksRef: RefObject<HTMLDivElement>;
 };
 
 export default function Road({
@@ -19,7 +23,6 @@ export default function Road({
   farLayerRef,
   middleLayerRef,
   nearLayerRef,
-  roadMarksRef,
 }: RoadProps) {
   return (
     <div className="drive-scene" data-theme={isDark ? 'night' : 'day'} aria-label="Drive Mode road scene">
@@ -32,10 +35,19 @@ export default function Road({
         className="drive-world"
         style={{ width: `${DRIVE_WORLD_WIDTH}px` }}
       >
+        <svg
+          className="drive-road"
+          viewBox={`-500 0 ${DRIVE_ROAD_VIEWBOX_WIDTH} 1000`}
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          focusable="false"
+          style={{ left: '-500px', width: `${DRIVE_ROAD_VIEWBOX_WIDTH}px` }}
+        >
+          <path className="drive-road-surface" d={DRIVE_ROAD_CENTER_PATH} />
+          <path className="drive-road-edge" d={DRIVE_ROAD_EDGE_PATH} />
+          <path className="drive-road-marks" d={DRIVE_ROAD_CENTER_PATH} />
+        </svg>
         {children}
-      </div>
-      <div className="drive-road" aria-hidden="true">
-        <div ref={roadMarksRef} className="drive-road-marks" />
       </div>
     </div>
   );

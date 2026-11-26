@@ -1,4 +1,5 @@
 import type { DriveStation } from './stations';
+import { getDriveRoadSurfaceY } from './roadGeometry';
 
 type StationProps = {
   station: DriveStation;
@@ -11,7 +12,10 @@ export default function Station({ station, visited, onOpen }: StationProps) {
     <button
       type="button"
       className={`drive-station drive-station-${station.accent} ${visited ? 'is-visited' : ''}`}
-      style={{ left: `${station.worldPosition}px` }}
+      style={{
+        left: `${station.worldPosition}px`,
+        bottom: `calc(100% - ${getDriveRoadSurfaceY(station.worldPosition)}%)`,
+      }}
       aria-label={`${visited ? 'Revisit' : 'Visit'} ${station.label} station`}
       onClick={() => onOpen(station)}
     >

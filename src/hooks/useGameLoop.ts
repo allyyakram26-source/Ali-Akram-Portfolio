@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type MutableRefObject, type RefObject } from 'react';
 import type { DriveMovement } from './useCarControls';
+import { DRIVE_WORLD_WIDTH, getDriveRoadSurfaceY } from '../components/drive/roadGeometry';
 
-export const DRIVE_WORLD_WIDTH = 6600;
+export { DRIVE_WORLD_WIDTH } from '../components/drive/roadGeometry';
 
 export type DriveStationPosition = {
   id: string;
@@ -15,7 +16,6 @@ type UseGameLoopOptions = {
   farLayerRef: RefObject<HTMLDivElement>;
   middleLayerRef: RefObject<HTMLDivElement>;
   nearLayerRef: RefObject<HTMLDivElement>;
-  roadMarksRef: RefObject<HTMLDivElement>;
   carRef: RefObject<HTMLDivElement>;
   stations: readonly DriveStationPosition[];
   visitedStations: ReadonlySet<string>;
@@ -33,7 +33,6 @@ export default function useGameLoop({
   farLayerRef,
   middleLayerRef,
   nearLayerRef,
-  roadMarksRef,
   carRef,
   stations,
   visitedStations,
@@ -46,18 +45,22 @@ export default function useGameLoop({
 
   const jumpTo = useCallback(
     (stationWorldPosition: number) => {
-      const anchor = window.innerWidth * 0.2;
+      const carAnchor = window.innerWidth * 0.2;
       const maxOffset = Math.max(DRIVE_WORLD_WIDTH - window.innerWidth, 0);
-      const position = Math.min(Math.max(stationWorldPosition - anchor, 0), maxOffset);
+      const position = Math.min(Math.max(stationWorldPosition - carAnchor, 0), maxOffset);
       worldPositionRef.current = position;
       speedRef.current = 0;
       setTransform(worldRef.current, `translate3d(${-position}px, 0, 0)`);
       setTransform(farLayerRef.current, `translate3d(${-position * 0.12}px, 0, 0)`);
       setTransform(middleLayerRef.current, `translate3d(${-position * 0.24}px, 0, 0)`);
       setTransform(nearLayerRef.current, `translate3d(${-position * 0.4}px, 0, 0)`);
+      carRef.current?.style.setProperty(
+        '--road-surface-y',
+        `${getDriveRoadSurfaceY(position + carAnchor)}%`
+      );
       setMetrics({ worldPosition: Math.round(position), speed: 0 });
     },
-    [farLayerRef, middleLayerRef, nearLayerRef, worldRef]
+    [carRef, farLayerRef, middleLayerRef, nearLayerRef, worldRef]
   );
 
   useEffect(() => {
@@ -71,7 +74,6 @@ export default function useGameLoop({
     let frameId = 0;
     let lastFrameTime = 0;
     let lastMetricsTime = 0;
-    let roadPhase = 0;
     let lastWheelDuration = '';
 
     const renderFrame = (now: number) => {
@@ -105,11 +107,13 @@ export default function useGameLoop({
       setTransform(middleLayerRef.current, `translate3d(${-position * 0.24}px, 0, 0)`);
       setTransform(nearLayerRef.current, `translate3d(${-position * 0.4}px, 0, 0)`);
 
-      roadPhase = (roadPhase + speed * deltaFrames) % 80;
-      setTransform(roadMarksRef.current, `translate3d(${-roadPhase}px, 0, 0)`);
-
       const car = carRef.current;
       if (car) {
+        const carAnchor = window.innerWidth * 0.2;
+        car.style.setProperty(
+          '--road-surface-y',
+          `${getDriveRoadSurfaceY(position + carAnchor)}%`
+        );
         const tilt = direction > 0 ? -2.5 : direction < 0 ? 3 : 0;
         car.style.setProperty('--car-tilt', `${tilt}deg`);
         car.dataset.moving = String(Math.abs(speed) > 0.15);
@@ -173,7 +177,6 @@ export default function useGameLoop({
     movementRef,
     nearLayerRef,
     onStationApproach,
-    roadMarksRef,
     stations,
     visitedStations,
     worldRef,

@@ -10,6 +10,7 @@ import StationPanel from './StationPanel';
 import TouchControls from './TouchControls';
 import Hud from './Hud';
 import { DRIVE_STATIONS, type DriveStation, type DriveStationId } from './stations';
+import { getDriveRoadSurfaceY } from './roadGeometry';
 
 type DriveModeProps = {
   isDark: boolean;
@@ -22,7 +23,6 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
   const farLayerRef = useRef<HTMLDivElement>(null);
   const middleLayerRef = useRef<HTMLDivElement>(null);
   const nearLayerRef = useRef<HTMLDivElement>(null);
-  const roadMarksRef = useRef<HTMLDivElement>(null);
   const carRef = useRef<HTMLDivElement>(null);
   const [activeStation, setActiveStation] = useState<DriveStation | null>(null);
   const [visitedStations, setVisitedStations] = useState<Set<DriveStationId>>(() => new Set());
@@ -48,7 +48,6 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
     farLayerRef,
     middleLayerRef,
     nearLayerRef,
-    roadMarksRef,
     carRef,
     stations: DRIVE_STATIONS,
     visitedStations,
@@ -86,7 +85,6 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
         farLayerRef={farLayerRef}
         middleLayerRef={middleLayerRef}
         nearLayerRef={nearLayerRef}
-        roadMarksRef={roadMarksRef}
       >
         {DRIVE_STATIONS.map((station) => (
           <Station

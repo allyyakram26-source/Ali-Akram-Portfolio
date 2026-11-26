@@ -2,36 +2,68 @@ import { forwardRef } from 'react';
 
 const Car = forwardRef<HTMLDivElement>(function Car(_props, ref) {
   return (
-    <div ref={ref} className="drive-car" data-moving="false" aria-label="Ali's portfolio car">
-      <svg className="drive-car-svg" viewBox="0 0 220 100" role="img" aria-label="Blue sports car">
+    <div ref={ref} className="drive-car" data-moving="false" aria-label="Ali's portfolio monster truck">
+      <svg className="drive-car-svg" viewBox="0 0 280 140" role="img" aria-label="Cyan monster truck">
         <defs>
-          <linearGradient id="drive-car-paint" x1="30" y1="24" x2="190" y2="84" gradientUnits="userSpaceOnUse">
+          <linearGradient id="drive-car-paint" x1="32" y1="26" x2="250" y2="102" gradientUnits="userSpaceOnUse">
             <stop stopColor="#67E8F9" />
             <stop offset=".48" stopColor="#22D3EE" />
             <stop offset="1" stopColor="#6366F1" />
           </linearGradient>
-          <linearGradient id="drive-car-window" x1="83" y1="33" x2="145" y2="61" gradientUnits="userSpaceOnUse">
+          <linearGradient id="drive-car-window" x1="97" y1="25" x2="167" y2="60" gradientUnits="userSpaceOnUse">
             <stop stopColor="#0F172A" />
             <stop offset="1" stopColor="#164E63" />
           </linearGradient>
+          <linearGradient id="drive-truck-rim" x1="52" y1="83" x2="91" y2="131" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#E2E8F0" />
+            <stop offset=".55" stopColor="#64748B" />
+            <stop offset="1" stopColor="#CBD5E1" />
+          </linearGradient>
         </defs>
-        <ellipse cx="113" cy="85" rx="91" ry="9" fill="#020617" opacity=".28" />
-        <path d="M22 68c3-10 10-17 21-20l36-8 22-24c4-5 10-8 16-8h32c10 0 18 5 24 13l16 21 15 7c7 3 11 8 13 16l2 9H19l3-6Z" fill="url(#drive-car-paint)" stroke="#BAF7FF" strokeWidth="2" />
-        <path d="m88 39 19-21c3-3 6-5 11-5h28c7 0 12 3 16 9l13 17H88Z" fill="url(#drive-car-window)" stroke="#A5F3FC" strokeOpacity=".8" strokeWidth="2" />
-        <path d="M118 14v25m44-17 10 17" stroke="#67E8F9" strokeOpacity=".58" strokeWidth="2" />
-        <path d="M28 66h25m127 0h19" stroke="#E0F2FE" strokeLinecap="round" strokeWidth="4" />
-        <path d="M21 75h177" stroke="#0F172A" strokeOpacity=".42" strokeWidth="3" />
-        <path d="M204 58h9c2 0 4 2 4 4v5h-10l-3-9Z" fill="#ECFEFF" />
-        <path d="M20 61h9l-3 9h-9v-5c0-2 1-4 3-4Z" fill="#FB7185" />
+
+        <ellipse cx="143" cy="142" rx="118" ry="7" fill="#020617" opacity=".3" />
+
         <g className="drive-car-wheel">
-          <circle cx="62" cy="77" r="15" fill="#111827" stroke="#CBD5E1" strokeWidth="4" />
-          <circle cx="62" cy="77" r="5" fill="#67E8F9" />
+          <circle cx="72" cy="111" r="29" fill="#111827" stroke="#020617" strokeWidth="5" />
+          <circle cx="72" cy="111" r="24" fill="none" stroke="#475569" strokeWidth="5" strokeDasharray="8 7" />
+          <circle cx="72" cy="111" r="17" fill="url(#drive-truck-rim)" stroke="#E2E8F0" strokeWidth="2" />
+          <path d="M72 96v30m-15-15h30m-26-11 22 22m0-22-22 22" stroke="#22D3EE" strokeWidth="3" />
+          <circle cx="72" cy="111" r="5" fill="#0F172A" />
         </g>
+
         <g className="drive-car-wheel">
-          <circle cx="177" cy="77" r="15" fill="#111827" stroke="#CBD5E1" strokeWidth="4" />
-          <circle cx="177" cy="77" r="5" fill="#67E8F9" />
+          <circle cx="207" cy="111" r="29" fill="#111827" stroke="#020617" strokeWidth="5" />
+          <circle cx="207" cy="111" r="24" fill="none" stroke="#475569" strokeWidth="5" strokeDasharray="8 7" />
+          <circle cx="207" cy="111" r="17" fill="url(#drive-truck-rim)" stroke="#E2E8F0" strokeWidth="2" />
+          <path d="M207 96v30m-15-15h30m-26-11 22 22m0-22-22 22" stroke="#22D3EE" strokeWidth="3" />
+          <circle cx="207" cy="111" r="5" fill="#0F172A" />
         </g>
-        <path className="drive-headlight-beam" d="M210 59 318 37v47l-108-13v-12Z" fill="#BAF7FF" />
+
+        <path d="m45 82 22-17m24 17 21-17m56 16 19-15m17 16-18-15" fill="none" stroke="#94A3B8" strokeWidth="5" strokeLinecap="round" />
+        <path d="M39 78h201v12H39z" fill="#1E293B" stroke="#67E8F9" strokeWidth="2" />
+        <path d="M52 91h168" stroke="#0F172A" strokeWidth="5" />
+
+        <path
+          d="M22 88V69c0-7 5-12 13-14l47-8 20-25c4-5 9-7 16-7h41c10 0 18 5 24 13l17 22 29 8c9 3 15 10 17 19l2 11h-11c-4-16-15-27-30-27s-27 11-30 27h-73c-4-16-15-27-30-27S48 72 45 88H22Z"
+          fill="url(#drive-car-paint)"
+          stroke="#BAF7FF"
+          strokeWidth="3"
+          strokeLinejoin="round"
+        />
+        <path d="m97 46 18-22c2-3 5-4 9-4h34c7 0 12 3 16 9l12 17H97Z" fill="url(#drive-car-window)" stroke="#A5F3FC" strokeOpacity=".85" strokeWidth="2" />
+        <path d="M130 21v26m33-25 16 25" stroke="#67E8F9" strokeOpacity=".62" strokeWidth="2" />
+
+        <path d="M91 52h122m-68-4v34m-37-15h18m39 0h20" stroke="#0F172A" strokeOpacity=".48" strokeWidth="2" />
+        <path d="M157 61h20" stroke="#ECFEFF" strokeLinecap="round" strokeWidth="3" />
+        <path d="M26 69h18l-3 8H25z" fill="#FB7185" />
+        <path d="M250 61h12c4 0 7 3 7 7v8h-18l-5-8z" fill="#ECFEFF" />
+        <rect x="249" y="82" width="20" height="7" rx="2" fill="#CBD5E1" />
+        <rect x="16" y="84" width="17" height="7" fill="#64748B" />
+        <path d="M111 12h74m-66-5v10m57-10v10" stroke="#334155" strokeWidth="4" strokeLinecap="round" />
+        <path d="M117 9h61" stroke="#67E8F9" strokeWidth="3" strokeLinecap="round" />
+        <path d="M242 88v-7m-6 7v-7m-6 7v-7" stroke="#0F172A" strokeOpacity=".55" strokeWidth="2" />
+
+        <path className="drive-headlight-beam" d="m260 61 112-24v52l-112-15V61Z" fill="#BAF7FF" />
       </svg>
       <span className="drive-car-glow" aria-hidden="true" />
     </div>

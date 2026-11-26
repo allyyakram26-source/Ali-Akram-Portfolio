@@ -1734,39 +1734,48 @@ html[data-theme='dark'] .phone-tech-icon.phone-tech-typescript {
 .drive-road {
   position: absolute;
   z-index: 7;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 31%;
-  border-top: 5px solid rgba(226, 232, 240, 0.72);
-  background:
-    linear-gradient(180deg, rgba(100, 116, 139, 0.08), transparent 25%),
-    linear-gradient(180deg, #334155 0%, #1e293b 100%);
-  box-shadow: 0 -12px 30px rgba(15, 23, 42, 0.14);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
 }
 
-.drive-scene[data-theme='night'] .drive-road {
-  border-top-color: rgba(103, 232, 249, 0.48);
-  background: linear-gradient(180deg, #202b40, #111827);
+.drive-road-surface {
+  fill: none;
+  stroke: #334155;
+  stroke-width: 310px;
+}
+
+.drive-scene[data-theme='night'] .drive-road-surface {
+  stroke: #202b40;
+}
+
+.drive-road-edge {
+  fill: none;
+  stroke: rgba(226, 232, 240, 0.72);
+  stroke-width: 5px;
+}
+
+.drive-scene[data-theme='night'] .drive-road-edge {
+  stroke: rgba(103, 232, 249, 0.48);
 }
 
 .drive-road-marks {
-  position: absolute;
-  top: 52%;
-  left: 0;
-  width: 200%;
-  height: 7px;
-  background: repeating-linear-gradient(90deg, rgba(226, 232, 240, 0.72) 0 54px, transparent 54px 106px);
+  fill: none;
+  stroke: rgba(226, 232, 240, 0.72);
+  stroke-width: 6px;
+  stroke-dasharray: 54 52;
+  stroke-linecap: butt;
   opacity: 0.82;
-  will-change: transform;
 }
 
 .drive-car {
   position: absolute;
   z-index: 12;
-  bottom: calc(31% - 1px);
+  bottom: calc(100% - var(--road-surface-y, 69%));
   left: clamp(4.5rem, 20vw, 12rem);
-  width: clamp(150px, 23vw, 220px);
+  width: clamp(170px, 28vw, 270px);
   transform: translateY(0) rotate(var(--car-tilt, 0deg));
   transform-origin: 50% 85%;
   transition: transform 160ms ease-out;
