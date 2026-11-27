@@ -89,6 +89,9 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
     onStationApproach: openStationById,
     onPickup: handlePickup,
   });
+  useEffect(() => {
+    controls.updateEngineSound(game.speed, game.boosting);
+  }, [controls.updateEngineSound, game.boosting, game.speed]);
   const handleJumpToStation = useCallback(
     (station: DriveStation) => {
       game.jumpTo(station.worldPosition);
@@ -255,7 +258,7 @@ export default function DriveMode({ isDark, onToggleTheme, onExitClassic }: Driv
         unlockedAchievements={achievements.unlocked}
         latestAchievement={achievements.latest}
         onJump={handleJumpToStation}
-        onToggleMuted={() => controls.setMuted((muted) => !muted)}
+        onToggleMuted={controls.toggleMuted}
         onCycleWeather={cycleWeather}
         onBoostChange={(pressed) => controls.setTouchControl('boost', pressed)}
       />

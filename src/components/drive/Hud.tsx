@@ -188,7 +188,7 @@ export default function Hud({
           type="button"
           className="drive-mute-button"
           aria-pressed={!muted}
-          aria-label={muted ? 'Unmute horn sound' : 'Mute horn sound'}
+          aria-label={muted ? 'Unmute engine and horn sounds' : 'Mute engine and horn sounds'}
           onClick={onToggleMuted}
         >
           <span aria-hidden="true">{muted ? '🔇' : '🔊'}</span>

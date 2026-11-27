@@ -17,6 +17,7 @@ import CodeTerminal from '../components/CodeTerminal';
 import Reveal from '../components/Reveal';
 import ScrambleText from '../components/ScrambleText';
 import PhoneTechOrbit from '../components/PhoneTechOrbit';
+import ProjectScreenPreview from '../components/ProjectScreenPreview';
 import TiltCard from '../components/TiltCard';
 import useMagneticPointer from '../hooks/useMagneticPointer';
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
@@ -2283,14 +2284,22 @@ function ClassicPortfolio({
             onClick={(e) => {
               if (e.target === e.currentTarget) setActiveProject(null);
             }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md"
+            className="project-showcase-backdrop"
           >
-            <div className="relative w-full max-w-xl rounded-3xl bg-white dark:bg-[#0B101B] border border-slate-200 dark:border-white/15 p-6 sm:p-8 shadow-2xl">
+            <div className="project-showcase-modal">
+              <div className="project-showcase-visual">
+                <ProjectScreenPreview
+                  key={activeProject.id}
+                  project={activeProject}
+                  reducedMotion={prefersReducedMotion}
+                />
+              </div>
+              <div className="project-showcase-details">
               <button
                 type="button"
                 onClick={() => setActiveProject(null)}
                 aria-label="Close modal"
-                className="absolute top-5 right-5 p-2 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:text-cyan-400 transition-colors"
+                className="project-showcase-close"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -2349,6 +2358,7 @@ function ClassicPortfolio({
                     <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M7 7h10v10" />
                   </svg>
                 </a>
+              </div>
               </div>
             </div>
           </div>
